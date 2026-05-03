@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- View res.company form -->
+    <record id="view_res_company_form" model="ir.ui.view">
+        <field name="name">view.res.company.form</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='branches']" position="after">
+                <page name="ai_settings" string="AI Settings">
+                    <group>
+                        <field name="gemini_api_key" widget="password" password="True"/>
+                        <field name="gemini_language"/>
+                    </group>
+                </page>
+
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

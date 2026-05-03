@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hr_applicant_form_ai_inherit" model="ir.ui.view">
+        <field name="name">hr.applicant.form.ai.inherit</field>
+        <field name="model">hr.applicant</field>
+        <field name="inherit_id" ref="hr_recruitment.hr_applicant_view_form"/>
+        <field name="arch" type="xml">
+            
+            <xpath expr="//button[@name='archive_applicant']" position="after">
+                <button name="action_analyze_cv_with_ai" 
+                        type="object" 
+                        string="Analyze with AI" 
+                        class="btn-primary" 
+                        icon="fa-magic"/>
+                <button name="clear_ai_analysis" type="object" string="Clear Analysis AI"/>
+            </xpath>
+
+            <xpath expr="//page[@name='application_details']" position="after">
+                <page name="ai_scoring" string="AI Scoring" >
+                    <div class="o_settings_container" invisible="not ai_score">
+                        <div class="row mt-4">
+                            <div class="col-md-4 text-center">
+                                <group name="additional_info" string="AI Score">
+                                    <div class="oe_grey">
+                                        <h2 class="oe_inline">
+                                            <field name="ai_score" class="oe_inline"/> / 100
+                                        </h2>
+
+                                    </div>
+                                </group>
+                            </div>
+                            
+                            <div class="col-md-8" invisible="not ai_score">
+                                <div class="alert alert-info">
+                                    <i class="fa fa-info-circle"/> 
+                                    <strong>AI Professional Summary</strong>
+                                </div>
+                                <field name="ai_summary" 
+                                       placeholder="AI summary will appear here..." 
+                                       nolabel="1"/>
+                            </div>
+                        </div>
+                        
+                        <!-- <separator string="Suggested Interview Questions"/> -->
+                        <br/>
+                        <div invisible="not ai_score" style="background-color: #f8f9fa; padding: 15px; border-left: 5px solid #714B67; border-radius: 5px;">
+                                <div class="alert alert-warning">
+                                    <i class="fa fa-info-circle"/> 
+                                    <strong>Suggested Interview Questions</strong>
+                                </div>                            
+                                <field name="ai_questions" 
+                                   nolabel="1" 
+                                   placeholder="The AI will suggest specific questions for this candidate..."/>
+                        </div>
+                    </div>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

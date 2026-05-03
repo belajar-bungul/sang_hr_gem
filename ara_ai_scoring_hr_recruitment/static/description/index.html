@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>ARA HR AI Intelligence | Gemini-Powered CV Analysis for Odoo</title>
+    <meta name="description" content="Supercharge your Odoo HR recruitment with Gemini AI. Auto-extract, score, summarize CVs, and generate intelligent interview questions. Seamless Odoo native integration.">
+    <meta name="keywords" content="Odoo HR, AI CV Screening, Gemini AI, Recruitment Automation, Odoo Module, HR Applicant Tracking">
+    
+    <!-- Bootstrap 5 + Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #eef2f6 100%);
+        }
+        
+        /* Header dengan nuansa AI futuristik */
+        .gradient-header {
+            background: linear-gradient(105deg, #0b1120 0%, #1a1a3e 50%, #0f172a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .gradient-header::after {
+            content: "⚡";
+            position: absolute;
+            bottom: -30px;
+            right: -20px;
+            font-size: 180px;
+            opacity: 0.06;
+            pointer-events: none;
+        }
+        
+        .badge-soft {
+            background: rgba(59,130,246,0.15);
+            backdrop-filter: blur(2px);
+            border: 1px solid rgba(59,130,246,0.3);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 1.5rem 2.5rem rgba(0,0,0,0.1) !important;
+        }
+        
+        .feature-icon-circle {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, #10b98115 0%, #3b82f615 100%);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: #10b981 !important;
+        }
+        
+        /* demo card style */
+        .demo-card {
+            background: white;
+            border-radius: 28px;
+            transition: all 0.3s;
+            border: 1px solid rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        
+        .ai-score-ring {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(#10b981 0deg 288deg, #e9ecef 288deg 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin: 0 auto;
+        }
+        
+        .score-inner {
+            width: 96px;
+            height: 96px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+        
+        .score-number {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #10b981, #3b82f6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .btn-gradient {
+            background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+            border: none;
+            color: white !important;
+            padding: 12px 30px;
+            border-radius: 40px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-gradient:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16,185,129,0.4);
+        }
+        
+        .btn-outline-gradient {
+            background: transparent;
+            border: 2px solid #10b981;
+            color: #10b981 !important;
+            padding: 10px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-outline-gradient:hover {
+            background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%);
+            color: white !important;
+            border-color: transparent;
+        }
+        
+        .integration-badge {
+            background: #f1f5f9;
+            border-radius: 50px;
+            padding: 6px 16px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .question-bullet {
+            background: #f8fafc;
+            border-left: 4px solid #10b981;
+            padding: 10px 16px;
+            border-radius: 14px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .pricing-card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .pricing-card.featured {
+            border: 2px solid #10b981;
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(16,185,129,0.2);
+        }
+        
+        .pricing-price {
+            font-size: 48px;
+            font-weight: 800;
+            color: #10b981;
+        }
+        
+        footer {
+            background: #0f172a !important;
+        }
+        
+        footer * {
+            color: #94a3b8 !important;
+        }
+        
+        footer h5, footer .text-white {
+            color: #ffffff !important;
+        }
+        
+        .testimonial-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        @media (max-width: 768px) {
+            .ai-score-ring {
+                width: 100px;
+                height: 100px;
+            }
+            .score-inner {
+                width: 76px;
+                height: 76px;
+            }
+            .score-number {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header Hero Section -->
+<header class="gradient-header text-white py-5">
+    <div class="container py-4">
+        <div class="row align-items-center">
+            <div class="col-lg-8 text-center text-lg-start">
+                <span class="badge bg-primary text-white px-4 py-2 rounded-pill mb-4 d-inline-flex align-items-center gap-2">
+                    <i class="bi bi-cpu"></i> Odoo Native | Gemini AI Integration
+                </span>
+                <h1 class="display-4 fw-bold mb-3">ARA HR Intelligence <br><span style="background: linear-gradient(135deg, #10b981, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">AI-Powered CV Analysis</span></h1>
+                <p style="color: #ffffffcc; font-size: 1.2rem;">Transform your Odoo recruitment with Google Gemini AI. Auto-score resumes, generate smart summaries, and craft dynamic interview questions in seconds.</p>
+                <div class="d-flex flex-wrap gap-3 mt-4 justify-content-center justify-content-lg-start">
+                    <button class="btn-gradient border-0" onclick="scrollToDemo()"><i class="fas fa-chalkboard-user me-2"></i>See Live Demo</button>
+                    <button class="btn-outline-gradient" onclick="scrollToIntegration()"><i class="fab fa-odnoklassniki me-2"></i>How it works</button>
+                </div>
+            </div>
+            <div class="col-lg-4 mt-4 mt-lg-0 text-center">
+                <div class="bg-white bg-opacity-10 p-4 rounded-4 backdrop-blur-sm" style="backdrop-filter: blur(12px);">
+                    <i class="fas fa-robot fa-4x text-primary mb-2"></i>
+                    <h5 class="fw-bold mt-2">Gemini 3 Flash</h5>
+                    <p class="small text-white-50">Ultra-fast, accurate CV parsing & scoring</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main>
+    <!-- Interactive Demo Section (mirip style map tapi untuk AI CV) -->
+    <div class="container mt-5" id="demo-section">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold mt-3">Experience Smart CV Analysis</h2>
+            <p class="text-muted">Simulate how Gemini AI reads, scores and extracts insights from any applicant CV (demo data based on real Odoo logic).</p>
+        </div>
+        
+        <div class="demo-card shadow-lg">
+            <div class="row g-0">
+                <!-- Left Panel: Applicant info & CV Preview -->
+                <div class="col-md-5 p-4 border-end" style="background: #fefefe;">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="bg-primary bg-opacity-10 p-2 rounded-3" style="color: #ffffff;"><i class="fas fa-file-pdf fs-4 text-danger"></i></div>
+                        <div>
+                            <h5 class="fw-bold mb-0">Candidate Snapshot</h5>
+                            <p class="text-muted small">Demo CV dataset — click analyze to see AI magic</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">Select Job Position (Role Context)</label>
+                        <select id="demo-job-select" class="form-select rounded-3 border-0 bg-light">
+                            <option value="Software Engineer">💻 Software Engineer (Python/Odoo)</option>
+                            <option value="Sales & Marketing Manager">📈 Sales & Marketing Manager</option>
+                            <option value="HR Business Partner">🤝 HR Business Partner</option>
+                            <option value="Data Analyst">📊 Data Analyst</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold"><i class="fas fa-id-card me-1"></i> CV Data Source</label>
+                        <div class="bg-light p-3 rounded-3 small">
+                            <span class="badge bg-secondary mb-2">Demo CV extract (PDF parsed)</span>
+                            <p class="mb-0 text-dark" id="demo-cv-preview">
+                                Experienced Odoo developer with 5+ years in ERP implementation, Python, PostgreSQL, and HR module customization. Led recruitment automation projects and integrated AI tools.
+                            </p>
+                        </div>
+                        <button class="btn btn-link btn-sm mt-2 text-primary" id="rotate-cv-btn"><i class="fas fa-sync-alt"></i> Switch CV example</button>
+                    </div>
+                    
+                    <button id="simulate-ai-analysis" class="btn-gradient w-100 py-3 fw-bold"><i class="fas fa-brain me-2"></i> Analyze with Gemini AI</button>
+                </div>
+                
+                <!-- Right Panel: AI Output (Score, Summary, Questions) -->
+                <div class="col-md-7 p-4" style="background: #ffffff;">
+                    <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-3">
+                        <h5 class="fw-bold mb-0"><i class="fas fa-chart-line text-primary me-2"></i>AI Intelligence Report</h5>
+                        <span class="integration-badge"><i class="fas fa-cloud-upload-alt"></i> Gemini 3 Flash</span>
+                    </div>
+                    
+                    <div class="row align-items-center mb-4">
+                        <div class="col-5 text-center">
+                            <div class="ai-score-ring" id="score-ring">
+                                <div class="score-inner">
+                                    <span class="score-number" id="ai-score-value">0</span>
+                                    <small class="text-muted">/100</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-7">
+                            <div class="d-flex gap-2 mb-2">
+                                <i class="fas fa-star text-warning"></i> <span class="fw-semibold">AI Confidence:</span> <span id="ai-confidence-label">Pending</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div id="ai-score-progress" class="progress-bar bg-success" style="width: 0%"></div>
+                            </div>
+                            <p class="small text-muted mt-2"><i class="fas fa-clock"></i> Real-time NLP + semantic matching</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6 class="fw-bold"><i class="fas fa-file-alt me-2 text-primary"></i>AI Summary</h6>
+                        <div id="ai-summary-text" class="bg-light p-3 rounded-3" style="min-height: 100px;">
+                            ✨ Click "Analyze" to generate intelligent insights based on role requirements.
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h6 class="fw-bold"><i class="fas fa-question-circle me-2 text-primary"></i>Suggested Interview Questions</h6>
+                        <div id="ai-questions-list" class="mt-2">
+                            <div class="question-bullet text-muted fst-italic">Analysis pending — AI will generate context-aware questions</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-3">
+            <small class="text-muted"><i class="fas fa-shield-alt"></i> This demo replicates Odoo module logic: hr.applicant AI fields, Gemini prompt engineering & JSON extraction.</small>
+        </div>
+    </div>
+     <div class="container mt-5 pt-4" id="integration-section">
+        <div class="text-center mb-5">
+            <span class="badge bg-secondary bg-opacity-10 fw-semibold px-4 py-2 rounded-pill"><i class="bi bi-stars"></i> How To Use?</span>
+            <h1 class="display-5 fw-bold mt-2">Video Tutorial</h1>
+            <div class="row justify-content-center">
+                        <div class="col-md-8 col-lg-7">
+                            <div class="video-wrapper">
+                                <video id="tutorialVideo" controls preload="metadata" class="w-100 rounded-3">
+                                    <source src="ai_scoring.mp4" type="video/mp4">
+                                    Your browser does not support the video tag. Please ensure tutor.mp4 is in the same directory.
+                                </video>
+                            </div>
+                        </div>
+            </div>
+        </div>
+        
+    </div>
+    <!-- Features Section (mirip style sebelumnya namun fokus AI + Odoo HR) -->
+    <div class="container mt-5 pt-4" id="integration-section">
+        <div class="text-center mb-5">
+            <span class="badge bg-secondary bg-opacity-10 fw-semibold px-4 py-2 rounded-pill"><i class="bi bi-stars"></i> Why ARA HR Intelligence?</span>
+            <h1 class="display-5 fw-bold mt-2">AI That Understands Talent</h1>
+            <p class="text-muted">Native integration inside Odoo <strong>hr.applicant</strong> & <strong>res.company</strong> models</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 h-100 card-hover">
+                    <div class="card-body p-4">
+                        <div class="feature-icon-circle mb-3"><i class="fas fa-robot"></i></div>
+                        <h5 class="fw-bold">Gemini 3 Flash Integration</h5>
+                        <p class="text-muted">Native Odoo <code>res.company</code> API key + language settings. Fast, secure, and fully customizable with prompt engineering.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 h-100 card-hover">
+                    <div class="card-body p-4">
+                        <div class="feature-icon-circle mb-3"><i class="fas fa-chart-simple"></i></div>
+                        <h5 class="fw-bold">AI Score + Summary</h5>
+                        <p class="text-muted">Automatically calculates matching percentage based on job description and CV content, highlighting strengths/weaknesses.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 h-100 card-hover">
+                    <div class="card-body p-4">
+                        <div class="feature-icon-circle mb-3"><i class="fas fa-lightbulb"></i></div>
+                        <h5 class="fw-bold">Dynamic Interview Questions</h5>
+                        <p class="text-muted">Generates role-specific, challenging questions based on CV gaps and experience — bullet format ready for Odoo form view.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 h-100 card-hover">
+                    <div class="card-body p-4">
+                        <div class="feature-icon-circle mb-3"><i class="fas fa-file-pdf"></i></div>
+                        <h5 class="fw-bold">Native PDF Text Extraction</h5>
+                        <p class="text-muted">Uses PyMuPDF to parse uploaded CV attachments from hr.candidate / hr.applicant. Clean text extraction for analysis.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 h-100 card-hover">
+                    <div class="card-body p-4">
+                        <div class="feature-icon-circle mb-3"><i class="fas fa-language"></i></div>
+                        <h5 class="fw-bold">Multilingual Support</h5>
+                        <p class="text-muted">Set your company language (English, Indonesian, etc.) and AI responds accordingly in summary/questions.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 h-100 card-hover">
+                    <div class="card-body p-4">
+                        <div class="feature-icon-circle mb-3"><i class="fas fa-database"></i></div>
+                        <h5 class="fw-bold">Seamless Odoo Field Mapping</h5>
+                        <p class="text-muted">Directly writes <code>ai_score, ai_summary, ai_questions</code> fields — ready for views, kanban, and reporting.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Pricing & Odoo Edition -->
+    <div class="container mt-5 pt-3" id="pricing-section">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-5">
+                <div class="pricing-card featured">
+                    <div class="mb-3"><i class="fas fa-gem fs-1 text-primary"></i></div>
+                    <h3 class="fw-bold">Requiremens Install Package Pip</h3>
+                    <ul class="list-unstyled mt-4 mb-4 text-start">
+                        <li><i class="fas fa-check-circle text-success me-2"></i>pip install google-genai</li>
+                        <li><i class="fas fa-check-circle text-success me-2"></i>pip install google-generativeai </li>
+                        <li><i class="fas fa-check-circle text-success me-2"></i>pip install pymupdf</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+</main>
+<br/>
+<footer class="bg-dark text-white-50 pt-5 pb-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-5 mb-4">
+                <h5 class="text-white mb-3">ARA SOFT</h5>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <h6 class="text-white">Odoo Native AI</h6>
+                <p class="small">Gemini 3 Flash · hr.applicant inheritance · res.company config · PyMuPDF parsing</p>
+            </div>
+        </div>
+        <hr class="opacity-25">
+        <div class="text-center small">
+            <i class="fas fa-brain me-1"></i> ARA HR Intelligence Module | Gemini-Powered for Odoo | © 2026 ARA SOFT
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Mock multiple CV examples for demo
+    const cvExamples = [
+        {
+            text: "Experienced Odoo developer with 5+ years in ERP implementation, Python, PostgreSQL, and HR module customization. Led recruitment automation projects and integrated AI tools. Strong background in Odoo framework and REST APIs.",
+            summaryContext: "Excellent technical fit for Odoo roles. Strong experience with HR modules and custom automation. Minor gap in team leadership but overall high potential."
+        },
+        {
+            text: "Senior Sales Manager with 8 years B2B SaaS experience. Expert in lead generation, CRM sales pipelines, and team management. Looking for growth in tech sales.",
+            summaryContext: "Great for Sales/Marketing role. Outstanding commercial acumen, but limited technical background. Could be perfect for customer-facing roles requiring industry expertise."
+        },
+        {
+            text: "HR Generalist with training in recruitment, employee relations, performance management. Certified in OKRs and workforce planning. Familiar with Odoo HR modules but no deep coding.",
+            summaryContext: "Solid HR operations profile. Understands Odoo basics but might need training for technical configurations. Excellent cultural fit and soft skills."
+        }
+    ];
+    let currentCVIndex = 0;
+    
+    // Helper function to get score based on job and cv text mock (simulate Gemini)
+    function simulateAIAnalysis(jobTitle, cvText) {
+        // simple deterministic simulation based on keywords matching role
+        let lowerJob = jobTitle.toLowerCase();
+        let lowerCV = cvText.toLowerCase();
+        let baseScore = 50;
+        if (lowerJob.includes("engineer") || lowerJob.includes("developer")) {
+            if (lowerCV.includes("python") || lowerCV.includes("odoo") || lowerCV.includes("postgresql")) baseScore += 30;
+            if (lowerCV.includes("ai") || lowerCV.includes("automation")) baseScore += 15;
+            if (lowerCV.includes("javascript") || lowerCV.includes("api")) baseScore += 10;
+        } else if (lowerJob.includes("sales") || lowerJob.includes("marketing")) {
+            if (lowerCV.includes("sales") || lowerCV.includes("marketing") || lowerCV.includes("crm")) baseScore += 35;
+            if (lowerCV.includes("b2b") || lowerCV.includes("saas")) baseScore += 20;
+        } else if (lowerJob.includes("hr") || lowerJob.includes("business partner")) {
+            if (lowerCV.includes("hr") || lowerCV.includes("recruitment") || lowerCV.includes("employee")) baseScore += 40;
+            if (lowerCV.includes("odoo hr")) baseScore += 15;
+        } else {
+            baseScore += 15;
+        }
+        let finalScore = Math.min(98, Math.max(22, baseScore));
+        
+        // generate summary
+        let summaryText = `🎯 Based on the CV and the ${jobTitle} position, the candidate shows a strong alignment. `;
+        if (finalScore >= 80) summaryText += `Excellent match! Core competencies directly map to requirements. Key strengths: domain experience + technical depth. Minor improvement: could highlight specific project metrics.`;
+        else if (finalScore >= 60) summaryText += `Good potential fit. Solid experience but some gaps in niche skills required for ${jobTitle}. Recommended to probe deeper during interview.`;
+        else summaryText += `Partial match. The profile might be better suited for a different track. Consider additional training or role realignment.`;
+        
+        // Generate questions array
+        let questions = [];
+        if (jobTitle.toLowerCase().includes("engineer")) {
+            questions.push("Describe your most complex Odoo customization and the technical challenges you solved.");
+            questions.push("How do you ensure high performance while scaling Odoo with large databases?");
+            questions.push("Explain your experience with AI integration into ERP workflows.");
+        } else if (jobTitle.toLowerCase().includes("sales")) {
+            questions.push("What is your strategy to increase CRM adoption and sales pipeline velocity?");
+            questions.push("Tell me about a time you turned a lost lead into a major client.");
+        } else {
+            questions.push("How would you improve the recruitment lifecycle integrating AI screening tools?");
+            questions.push("Give an example of a successful HR automation you implemented.");
+        }
+        questions.push("What motivates you in a fast-paced Odoo ecosystem?");
+        
+        // add contextual extra questions
+        if (finalScore < 65) questions.push("What development areas would you prioritize to excel in this role?");
+        
+        return { score: finalScore, summary: summaryText, questions: questions };
+    }
+    
+    // UI updater
+    function updateAIDisplay(score, summary, questions) {
+        document.getElementById('ai-score-value').innerText = score;
+        document.getElementById('ai-score-progress').style.width = `${score}%`;
+        const progressBar = document.getElementById('ai-score-progress');
+        if (score >= 70) progressBar.className = "progress-bar bg-success";
+        else if (score >= 50) progressBar.className = "progress-bar bg-info";
+        else progressBar.className = "progress-bar bg-warning";
+        document.getElementById('ai-confidence-label').innerHTML = score >= 70 ? "High Fit" : (score >= 50 ? "Moderate" : "Needs Review");
+        
+        // update conic gradient ring
+        const deg = (score / 100) * 360;
+        document.getElementById('score-ring').style.background = `conic-gradient(#10b981 0deg ${deg}deg, #e9ecef ${deg}deg 360deg)`;
+        
+        document.getElementById('ai-summary-text').innerHTML = `<i class="fas fa-pen-fill me-1 text-primary"></i> ${summary}`;
+        
+        const questionsContainer = document.getElementById('ai-questions-list');
+        questionsContainer.innerHTML = '';
+        questions.forEach(q => {
+            const div = document.createElement('div');
+            div.className = 'question-bullet';
+            div.innerHTML = `<i class="fas fa-comment-dots me-2 text-primary"></i> ${q}`;
+            questionsContainer.appendChild(div);
+        });
+    }
+    
+    function runAnalysis() {
+        const jobSelect = document.getElementById('demo-job-select');
+        const jobTitle = jobSelect.value;
+        const cvPreviewDiv = document.getElementById('demo-cv-preview');
+        let cvText = cvPreviewDiv.innerText;
+        // get actual CV text from current preview
+        if (!cvText || cvText.trim() === "") cvText = cvExamples[currentCVIndex].text;
+        const { score, summary, questions } = simulateAIAnalysis(jobTitle, cvText);
+        updateAIDisplay(score, summary, questions);
+    }
+    
+    function switchCVExample() {
+        currentCVIndex = (currentCVIndex + 1) % cvExamples.length;
+        const newText = cvExamples[currentCVIndex].text;
+        document.getElementById('demo-cv-preview').innerHTML = newText;
+        // optionally auto-analyze
+        runAnalysis();
+    }
+    
+    function scrollToDemo() {
+        document.getElementById('demo-section').scrollIntoView({ behavior: 'smooth' });
+    }
+    function scrollToIntegration() {
+        document.getElementById('integration-section').scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        // initial analysis demo
+        runAnalysis();
+        document.getElementById('simulate-ai-analysis').addEventListener('click', runAnalysis);
+        document.getElementById('rotate-cv-btn').addEventListener('click', switchCVExample);
+        // bonus: when job select changes, re-analyze
+        document.getElementById('demo-job-select').addEventListener('change', runAnalysis);
+    });
+</script>
+</body>
+</html>
