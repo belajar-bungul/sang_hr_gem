@@ -1,5 +1,5 @@
 {
-    'name': 'ARA HR AI Module Integrations Gemini - Smart Resume Scoring & Interview Questions',
+    'name': 'AI Recruitment & ATS (Smart Resume Scoring & Interview Questions)',
     'version': '18.0.1.0.0',
     'category': '',
     'summary': 'Smart Resume Scoring & Interview Questions with Google Gemini AI for Odoo HR',
