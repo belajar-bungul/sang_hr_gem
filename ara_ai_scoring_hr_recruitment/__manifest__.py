@@ -24,4 +24,5 @@
     'auto_install': False,
     'price' :83.45,
     'currency' : 'USD',
+    'images': ['static/description/banner.gif'],
 }
