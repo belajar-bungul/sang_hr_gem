@@ -22,7 +22,7 @@
     'installable': True,
     'application': False,
     'auto_install': False,
-    'price' :50,
+    'price' :35,
     'currency' : 'USD',
-    'images': ['static/description/banner sale.gif'],
+    'images': ['static/description/banner_sale.gif'],
 }
